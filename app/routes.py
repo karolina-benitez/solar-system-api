@@ -6,6 +6,7 @@ from .models.planets import Planet
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
+
 @planets_bp.route("/", methods=["POST", "GET"])
 def planets():
     if request.method == "GET":
@@ -24,9 +25,9 @@ def planets():
     elif request.method == "POST":
         request_body = request.get_json()
 
-        new_planet = Planet(name = request_body["name"],
-                            description =  request_body["description"],
-                            surface_area = request_body["surface_area"])
+        new_planet = Planet(name=request_body["name"],
+                            description=request_body["description"],
+                            surface_area=request_body["surface_area"])
 
         db.session.add(new_planet)
         db.session.commit()
@@ -34,7 +35,18 @@ def planets():
         return {
             "success": True,
             "message": f"planet {new_planet.name} has been created"
-            }, 201
+        }, 201
+
+
+@planets_bp.route("/<planet_id>", methods=["GET"])
+def handle_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    return {
+        "id": planet.id,
+        "name": planet.name,
+        "description": planet.description,
+        "surface_area": planet.surface_area
+    }
 
 
 # As a client, I want to send a request to get one existing planet, so that I can see the id, name, description, and other data of the planet.
