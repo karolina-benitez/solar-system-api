@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask import request
 from flask import jsonify
 from .models.planets import Planet
+from flask import make_response
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
@@ -38,15 +39,17 @@ def planets():
         }, 201
 
 
-@planets_bp.route("/<planet_id>", methods=["GET"])
+@planets_bp.route("/<planet_id>", methods=["GET", "DELETE"])
 def handle_planet(planet_id):
     planet = Planet.query.get(planet_id)
-    return {
-        "id": planet.id,
-        "name": planet.name,
-        "description": planet.description,
-        "surface_area": planet.surface_area
-    }
-
-
-# As a client, I want to send a request to get one existing planet, so that I can see the id, name, description, and other data of the planet.
+    if request.method == "GET":
+        return {
+            "id": planet.id,
+            "name": planet.name,
+            "description": planet.description,
+            "surface_area": planet.surface_area
+        }
+    elif request.method == "DELETE":
+        db.session.delete(planet)
+        db.session.commit()
+        return make_response(f"Planet #{planet.id} deleted sucessfully")
