@@ -11,7 +11,8 @@ def create_app(test_config=None):
 
     # DB Config
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/solar_system_development'
+    app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+    app.config['SQLALCHEMY_TEST_DATABASE_URI'] = SQLALCHEMY_TEST_DATABASE_URI
 
     # import models
     from app.models.planets import Planet
