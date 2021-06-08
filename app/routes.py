@@ -42,6 +42,9 @@ def handle_planets():
 @planets_bp.route("/<planet_id>", methods=["GET", "DELETE", "PUT"])
 def handle_planet(planet_id):
     planet = Planet.query.get(planet_id)
+    if planet is None:
+        return make_response("", 404)
+
     if request.method == "GET":
         return {
             "id": planet.id,
