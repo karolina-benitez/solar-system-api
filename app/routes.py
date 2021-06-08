@@ -9,7 +9,7 @@ planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
 
 @planets_bp.route("/", methods=["POST", "GET"])
-def planets():
+def handle_planets():
     if request.method == "GET":
         planets = Planet.query.all()
         planets_response = []
@@ -39,7 +39,7 @@ def planets():
         }, 201
 
 
-@planets_bp.route("/<planet_id>", methods=["GET", "DELETE"])
+@planets_bp.route("/<planet_id>", methods=["GET", "DELETE", "PUT"])
 def handle_planet(planet_id):
     planet = Planet.query.get(planet_id)
     if request.method == "GET":
@@ -53,3 +53,13 @@ def handle_planet(planet_id):
         db.session.delete(planet)
         db.session.commit()
         return make_response(f"Planet #{planet.id} deleted sucessfully")
+    elif request.method == "PUT":
+        form_data = request.get_json()
+
+        planet.name = form_data["name"]
+        planet.description = form_data["description"]
+        planet.surface_area = form_data["surface_area"]
+
+        db.session.commit()
+
+        return make_response(f"Planet #{planet.id} successfully updated!")
